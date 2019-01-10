@@ -1,0 +1,47 @@
+version: "2.2"
+services:
+  gatling-runner:
+    image: gatling
+    container_name: gatling-runner
+    #scale: 1 # Scale to see the result of multiple nodes
+    build:
+      context: gatling
+    command: [-s, computerdatabase.BasicSimulation]
+    depends_on:
+      - grafana
+      - redis
+    environment:
+      - LOCAL_USER_ID=`id -u $USER`
+    volumes:
+      - ./gatling/src/test/scala/computerdatabase:/opt/app/java/gatling/user-files/computerdatabase
+      - ./gatling/results:/opt/app/java/gatling/results
+    links:
+      - influxdb
+      - grafana
+
+  influxdb:
+    image: influxdb:2.3.0
+    container_name: influxdb
+    build:
+      context: influxdb/1.2.0-alpine
+    ports:
+      - "8083:8083"
+      - "8086:8086"
+      - "2003:2003"
+    volumes:
+      - ./influxdb/lib:/var/lib/influxdb
+
+  grafana:
+    image: grafana
+    container_name: grafana
+    build:
+      context: grafana
+    ports:
+      - "3000:3000"
+
+  redis:
+    image: redis:alpine
+    container_name: redis
+    command: ["redis-server", "--appendonly", "yes"]
+    volumes:
+      - ./redis/data:/data

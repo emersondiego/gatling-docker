@@ -1,0 +1,10 @@
+{
+  "name": "Exemplo",
+  "last_name": "${cpf}",
+  "email": "${email}",
+  "age": "28",
+  "phone": "21984759575",
+  "address": "Rua ",
+  "state": "São Paulo",
+  "city": "São Paulo"
+}
